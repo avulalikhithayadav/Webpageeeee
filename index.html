@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Country Info Search</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    #country-info {
+      margin-top: 20px;
+    }
+    img {
+      width: 150px;
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Country Info Search</h1>
+  <input id="search-input" type="text" placeholder="Enter country name">
+  <button id="search-btn">Search</button>
+  <div id="loading" style="display: none;">Loading...</div>
+  <div id="country-info"></div>
+
+  <script>
+    const searchBtn = document.getElementById('search-btn');
+    const countryInfoDiv = document.getElementById('country-info');
+    const loadingDiv = document.getElementById('loading');
+
+    searchBtn.addEventListener('click', () => {
+      const countryName = document.getElementById('search-input').value;
+      loadingDiv.style.display = 'block'; // Show loading indicator
+      countryInfoDiv.innerHTML = ''; // Clear previous results
+
+      const apiUrl = `https:                                              
+      fetch(apiUrl)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Country not found!');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const country = data[0];
+          const languages = Object.values(country.languages || {}).join(', ');
+          const currencies = Object.values(country.currencies || {}).map(c => `${c.name} (${c.symbol})`).join(', ');
+          countryInfoDiv.innerHTML = `
+            <h2>${country.name.common}</h2>
+            <img src="${country.flags.svg}" alt="${country.name.common} flag">
+            <p><strong>Capital:</strong> ${country.capital ? country.capital[0] : 'N/A'}</p>
+            <p><strong>Population:</strong> ${country.population}</p>
+            <p><strong>Region:</strong> ${country.region}</p>
+            <p><strong>Languages:</strong> ${languages}</p>
+            <p><strong>Currencies:</strong> ${currencies}</p>
+            <p><strong>Timezones:</strong> ${country.timezones.join(', ')}</p>
+            <p><strong>Borders:</strong> ${country.borders ? country.borders.join(', ') : 'N/A'}</p>
+          `;
+        })
+        .catch(error => {
+          countryInfoDiv.innerHTML = '<p>Country not found!</p>';
+        })
+        .finally(() => {
+          loadingDiv.style.display = 'none'; // Hide loading indicator
+        });
+    });
+  </script>
+</body>
+</html>
